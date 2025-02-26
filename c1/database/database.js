@@ -3,7 +3,8 @@ const dotenv = require(`dotenv`);
 dotenv.config({ path: `${__dirname}/../config.env` });
 
 
-const DB = process.env.DATABASE.replace(`<PASSWORD>`, process.env.DATABASE_PASSWORD);
+const DB = process.env.DATABASE.replace(`<PASSWORD>`, 
+    process.env.DATABASE_PASSWORD);
 console.log(DB);
 
 exports.connectToDataBase = async () => { 
