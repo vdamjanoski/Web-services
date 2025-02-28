@@ -66,7 +66,7 @@ exports.createByUser = async (req, res) => {
   } catch (err) {
     res.status(404).json({ status: 'fail', message: err.message });
   }
-};
+}
 
 exports.getPostsByUser = async (req, res) => {
     try{
