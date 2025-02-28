@@ -5,23 +5,18 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Korisnikot mora da ima ime'],
+    required: [true, 'You must enter your name!'],
   },
   email: {
     type: String,
-    required: [true, 'Korisnikot mora da ima validen email'],
+    required: [true, 'You must enter your email!'],
     lowercase: true,
     unique: true,
-    validate: [validator.isEmail, 'Ve molime vnesete validen email'],
-  },
-  role: {
-    type: String,
-    enum: ['user', 'admin'],
-    default: 'user',
+    validate: [validator.isEmail, 'Your email is not valid'],
   },
   password: {
     type: String,
-    required: [true, 'Korisnikot mora da ima korisnicka lozinka'],
+    required: [true, 'You must enter your password!'],
   },
 });
 

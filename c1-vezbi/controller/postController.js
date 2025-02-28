@@ -1,15 +1,8 @@
 const Post = require(`../model/post/postSchema`);
 
-//! Zadaca za chas
-//! Kreiranje na forum ---
-//? get /posts za moze da gi zemame site posta
-//? get /post:id specificen post
-//? post /posts da moze kako korisnici da kreirame post
-//? i da imame /myprofile kade sto kje gi prikazuvame samo nashite postovi
-
 exports.createPost = async (req, res) => {
   try {
-    const newPost = await Post.create({title: req.body.title, content: req.body.content});
+    const newPost = await Post.create(req.body);
 
     res.status(201).json({
       status: 'Success',
@@ -61,13 +54,29 @@ exports.getPost = async (req, res) => {
       }
 }
 
-// exports.getPostsByUser = async (req,res) => {
-//     try{
-//         const
-//     } catch (err) {
-//         res.status(500).json({
-//           status: 'fail',
-//           err: err.message,
-//         });
-//       }
-// }
+
+exports.createByUser = async (req, res) => {
+  try {
+    const newPost = await Post.create({
+      title: req.body.title,
+      content: req.body.content,
+      author: req.auth.id,
+    });
+    res.status(201).json(newPost);
+  } catch (err) {
+    res.status(404).json({ status: 'fail', message: err.message });
+  }
+};
+
+exports.getPostsByUser = async (req, res) => {
+    try{
+        const myPosts = await Post.find({author: req.auth.id});
+        res.status(201).json(myPosts);
+    } catch (err) {
+        res.status(500).json({
+          status: 'fail',
+          err: err.message,
+        });
+      }
+}
+

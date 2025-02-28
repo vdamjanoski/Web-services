@@ -10,6 +10,10 @@ const postSchema = new mongoose.Schema({
     require: [true, `You must write a content to the post`],
     max: 300
   },
+  author: {
+    type: mongoose.Schema.ObjectId,
+    ref: `User`,
+  }
 });
 
 const Post = mongoose.model("Post", postSchema);

@@ -1,7 +1,8 @@
 const jwt = require('express-jwt');
 const cookieParser = require('cookie-parser');
 const express = require('express');
-const auth = require('./controller/userController');
+
+const user = require('./controller/userController');
 const post = require(`./controller/postController`);
 const db = require(`./database/database`);
 
@@ -13,12 +14,15 @@ app.use(cookieParser());
 
 db.connectToDatabase();
 
-app.post('/api/v1/signup', auth.signup);
-app.post('/api/v1/login', auth.login);
+app.post('/api/v1/signup', user.signup);
+app.post('/api/v1/login', user.login);
 
 app.post(`/api/v1/posts`, post.createPost);
 app.get(`/api/v1/posts`, post.getPosts);
 app.get(`/api/v1/post/:id`, post.getPost);
+
+app.post(`/api/v1/postsByUser`, user.protect, post.createByUser);
+app.get(`/api/v1/myProfile`, user.protect, post.getPostsByUser);
 
 app.use(
   jwt
