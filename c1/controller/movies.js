@@ -48,7 +48,6 @@ exports.update = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log;
     res.status(404).json({
       status: 'fail',
       message: err,
@@ -58,9 +57,7 @@ exports.update = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    console.log('test');
     const newMovie = await Movie.create(req.body);
-    console.log(newMovie);
     res.status(201).json({
       status: 'success',
       data: {

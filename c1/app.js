@@ -34,7 +34,6 @@ app.use(
       algorithms: ['HS256'],
       secret: process.env.JWT_SECRET,
       getToken: (req) => {
-        console.log(req.cookies);
         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
           return req.headers.authorization.split(' ')[1];
         }

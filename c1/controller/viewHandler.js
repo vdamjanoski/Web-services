@@ -26,7 +26,6 @@ exports.getLoginForm = async (req, res) => {
   
   exports.createMovie = async (req, res) => {
     try {
-      console.log(req.body);
       await Movie.create(req.body);
       res.redirect('/viewmovies');
     } catch (err) {
