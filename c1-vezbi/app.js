@@ -24,26 +24,25 @@ app.get(`/api/v1/post/:id`, post.getPost);
 app.post(`/api/v1/postsByUser`, user.protect, post.createByUser);
 app.get(`/api/v1/myProfile`, user.protect, post.getPostsByUser);
 
-app.use(
-  jwt
-    .expressjwt({
-      algorithms: ['HS256'],
-      secret: process.env.JWT_SECRET,
-      getToken: (req) => {
-        console.log(req.cookies);
-        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-          return req.headers.authorization.split(' ')[1];
-        }
-        if (req.cookies.jwt) {
-          return req.cookies.jwt;
-        }
-        return null;
-      },
-    })
-    .unless({
-      path: ['/api/v1/signup', '/api/v1/login'],
-    })
-);
+
+
+// app.use(jwt.expressjwt({
+//       algorithms: ['HS256'],
+//       secret: process.env.JWT_SECRET,
+//       getToken: (req) => {
+//         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+//           return req.headers.authorization.split(' ')[1];
+//         }
+//         if (req.cookies.jwt) {
+//           return req.cookies.jwt;
+//         }
+//         return null;
+//       },
+//     })
+//     .unless({
+//       path: ['/api/v1/signup', '/api/v1/login'],
+//     })
+// );
 app.listen(process.env.PORT, (err) => {
   if (err) {
     return console.log('Could not start service');

@@ -1,32 +1,76 @@
-const express = require(`express`);
-// npm run start
-const jwt = require(`express-jwt`);
-const cookieParser = require(`cookie-parser`);
-
-const database = require(`./database/database`);
-const companyController = require(`./controller/companyController`);
+const jwt = require('express-jwt');
+const cookieParser = require('cookie-parser');
+const express = require('express');
+const movies = require('./controller/movies');
+const auth = require('./controller/authHandler');
+const viewHandler = require(`./controller/viewHandler`);
+const db = require('./database/database');
 
 const app = express();
-app.use(express.urlencoded({extended: true}));
+
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-database.connectToDataBase();
-app.use(jwt.expressjwt({
-    algorithms: [`HS256`],
-    secret: process.env.JWT_SECRET,
-    }).unless({
-        path: ["/api/vi/signup", "/api/vi/login", "/user"]
+app.set("view engine", "ejs");
+app.use(express.static(`public`));
+
+db.connectToDataBase();
+
+app.post('/api/v1/signup', auth.signup);
+app.post('/api/v1/login', auth.login);
+
+app.get('/movies', movies.getAll);
+
+
+app.get(`/login`, viewHandler.getLoginForm);
+app.post(`/createmovie`, viewHandler.createMovie);
+app.get(`/viewmovies`, viewHandler.movieView);
+app.get(`/deletemovie/:id`, viewHandler.deleteMovie);
+
+app.use(
+  jwt
+    .expressjwt({
+      algorithms: ['HS256'],
+      secret: process.env.JWT_SECRET,
+      getToken: (req) => {
+        console.log(req.cookies);
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+          return req.headers.authorization.split(' ')[1];
+        }
+        if (req.cookies.jwt) {
+          return req.cookies.jwt;
+        }
+        return null;
+      },
+    })
+    .unless({
+      path: ['/api/v1/signup', '/api/v1/login', '/movies/:id', '/login'],
     })
 );
-app.get(`/api/v1/user`, companyController.getAllUsers);
 
-app.post(`/api/v1/user`, companyController.createUser);
-app.patch(`/api/v1/user/:id`, companyController.updateUser);
-app.delete(`/api/v1/user/:id`, companyController.deleteUser);
+app.get('/movies', movies.getAll);
+app.get('/movies/:id', movies.getOne);
+app.post('/movies', auth.protect, movies.create);
+app.patch('/movies/:id', movies.update);
+app.delete('/movies/:id', movies.delete);
+app.post('/movieByMe', auth.protect, movies.createByUser);
+app.get('/movieByMe', auth.protect, movies.getByUser);
+
+app.get('/login', viewHandler.getLoginForm);
+app.get('/viewmovies', viewHandler.movieView);
+app.post('/createmovie', viewHandler.createMovie);
+app.get('/deletemovie/:id', viewHandler.deleteMovie);
+app.get(`/viewmovie/:id`, viewHandler.viewMovieById);
+
+app.listen(process.env.PORT, (err) => {
+  if (err) {
+    return console.log('Could not start service');
+  }
+  console.log(`Service started successfully on port ${process.env.PORT}`);
+});
 
 
-const port = 10000;
-app.listen(port, () => {
-    console.log(`Successfully started server on port ${port}`);
-})
+//Click na movie da se pojavi site informacii za filmot
+//Kopce za nazad
+//Da se menuva filmot preku forma na click
