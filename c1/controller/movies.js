@@ -1,8 +1,82 @@
 const Movie = require('../model/moviesModel');
+// npm install uuid npm install multer
+const multer = require(`multer`);
+const uuid = require(`uuid`);
+
+// multerStorage - definirame na koja lokacija i kakvo ime bi imale slikite
+
+const imageId = uuid.v4();
+console.log(imageId);
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "public/img");
+  },
+  filename: (req, file, callback) => {
+    // -movie-uuid-timeStamp.jpg - vakov format
+    const ext = file.mimetype.split(`/`)[1];
+    callback(null, `movie-${imageId}-${Date.now()}.${ext}`);
+  },
+});
+
+const multerFilter = (req, file, callback) => {
+  if (file.mimetype.startsWith(`image`)){
+    callback(null, true);
+  } else {
+    callback(new Error(`FIle type is not supported`), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+// Poedinecna slika
+exports.uploadFilmPhotos = upload.single(`slika`);
+// Povekje sliki
+// exports.uploadFilmsSliki = upload.array(`sliki`, 3);
+// // Kombinacija
+// exports.uploadFilmsPhotos = upload.fields([
+//   { name: `slika`, maxCount: 1},
+//   { name: `sliki`, maxCount: 3},
+// ]);
+
+exports.update = async (req, res) => {
+  try {
+    console.log(req.file);
+    console.log(req.body);
+    if(req.file){
+      const fileName = req.file.filename;
+      req.body.slika = fileName;
+    }
+
+    // if(req.files && req.files.sliki){
+    //   const filenames = req.files.sliki.map((file)=> file.fileName);
+    //   req.body.sliki = filenames;
+    // }
+    
+    const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        movie,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+};
 
 exports.getAll = async (req, res) => {
   try {
-    //.select("")
+    // console.log(request.query);
     let movies = await Movie.find().populate('author', '-password').select('-slika');
     res.status(200).json({
       status: 'success',
@@ -13,7 +87,7 @@ exports.getAll = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: err,
+      message: err.message,
     });
   }
 };
@@ -35,25 +109,6 @@ exports.getOne = async (req, res) => {
   }
 };
 
-exports.update = async (req, res) => {
-  try {
-    const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    res.status(200).json({
-      status: 'success',
-      data: {
-        movie,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
 
 exports.create = async (req, res) => {
   try {
@@ -106,3 +161,5 @@ exports.getByUser = async (req, res) => {
     res.status(404).json({ status: 'fail', message: err.message });
   }
 };
+
+//implenet query search

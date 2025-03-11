@@ -4,17 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
+    <link rel="stylesheet" href="loginStyle.css">
   </head>
   <body>
-    <h1><%= podnaslov %></h1>
+    <div class="login-background">
+      <div class="login-container">
     <form class="form">
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required />
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required />
+      <div class="inputs">
+        <label for="email"></label> <br><br>
+        <input type="email" id="email" name="email" placeholder="email..." required /> <br><br>
+        <label for="password"></label> <br><br>
+        <input type="password" id="password" name="password" placeholder="password..." required />
+      </div>
       <button type="submit">Login</button>
     </form>
-
+      </div>
+  </div>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"
       integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg=="

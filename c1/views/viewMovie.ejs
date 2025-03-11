@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <%- include(`partials/header`) %>
+    <link rel="stylesheet" href="viewMovie.css">
+    <title><%= movie.title %></title>
+</head>
+<body>
+    <header>
+        <%- include(`partials/header`) %>
+    </header>
     <p>Movie title: <b><%= movie.title %></b></p>
     <p>Movie year: <b><%= movie.year %></b></p>
     <p>Movie imbdRating: <b><%= movie.imdbRating %></b></p>
     <p>Movie genre: <b><%= movie.genre %></b></p>
     <img src="/img/<%= movie.slika %>" alt="picture" />
-</head>
-<body> 
 </body>
 </html>
