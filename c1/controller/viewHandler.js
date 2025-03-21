@@ -1,4 +1,5 @@
 const Movie = require(`../model/moviesModel`);
+const sendEmail = require("./emailHandler");
 
 const multer = require(`multer`);
 const uuid = require(`uuid`);
@@ -103,6 +104,16 @@ exports.getLoginForm = async (req, res) => {
       });
       res.status(200).json(movieById);
     } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  exports.viewMovieByQuery = async (req,res) => {
+    try{
+      const title = req.query;
+      const movies = await Movie.find(title).populate(`author`);
+      res.status(200).render(`viewmoviess`,{ movies});
+    } catch(err) {
       res.status(500).send(err.message);
     }
   }

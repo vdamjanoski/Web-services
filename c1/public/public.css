@@ -59,7 +59,6 @@ body{
     transition: 0.5s;
 }
 .addFilm{
-    position: fixed;
     margin-left: 10px;
     gap: 5px;
     border: 1px solid gray;
@@ -113,7 +112,7 @@ body{
     padding: 10px 0 30px 10px;
     font-size: 22px;
  }
- header{
+ .form-search{
     display: flex;
     justify-content: center;
     padding: 50px;
@@ -127,11 +126,6 @@ body{
     background-color: #2f2e55;
     border: 0;
     color: white;
-}
-.search-img{
-    height: 50px;
-    width: 50px;
-    position: absolute;
 }
 
 

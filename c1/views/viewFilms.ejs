@@ -16,18 +16,25 @@
   <script>
     function hiddenDiv(){
       let div = document.getElementById("hiddenDiv");
-      if(div.style.display === "inline-block"){
+      if(div.style.display === "block"){
         div.style.display = "none";
       }else{
-        div.style.display = "inline-block";
+        div.style.display = "block";
       }
     };
   </script>
   <header>
-    <label for="search-input">
-      <input type="text" class="search-input" placeholder="Search or paste link"> </label>
-      <img src="searchicon.png" alt="search icon" class="search-img">
-    <!-- <h1 class="title">All movies</h1> -->
+    <form action="/viewmoviess" method="get" class="form-search">
+      <input type="text" class="search-input" list="genres" placeholder="Search by category" name="genre" >
+      <datalist id="genres">
+        <option value="Comedy">Comedy</option>
+                <option value="Action">Action</option>
+                <option value="Drama">Drama</option>
+                <option value="Science Fiction">Science Fiction</option>
+                <option value="Fantasy">Fantasy</option>
+      </datalist>
+      <!-- <button type="submit">Search</button> -->
+    </form>
   </header>
   <body>
 
@@ -38,7 +45,7 @@
         <% } else { %> <% movies.forEach(movie => { %>
         <div class="film">
           <a href="/viewmovie/<%= movie._id %>" title="<%= movie.title %>">
-            <img src="/img/<%= movie.slika %>" alt="picture" />
+            <img src="/img/<%= movie.slika %>.jpg" alt="picture" />
           </a>
             <p class="film-title"> <%= movie.title %></p>
           <a href="/deletemovie/<%= movie._id %>" class="button">Delete Movie</a>

@@ -15,4 +15,3 @@ exports.connectToDataBase = async () => {
         console.log(err.message);
     }
 }
-//process.env na dve aplikacii

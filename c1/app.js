@@ -63,6 +63,7 @@ app.get('/viewmovies', viewHandler.movieView);
 app.post('/createmovie', viewHandler.createMovie);
 app.get('/deletemovie/:id', viewHandler.deleteMovie);
 app.get(`/viewmovie/:id`, viewHandler.viewMovieById);
+app.get(`/viewmoviess`, viewHandler.viewMovieByQuery);
 
 app.listen(process.env.PORT, (err) => {
   if (err) {

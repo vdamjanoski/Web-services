@@ -76,7 +76,6 @@ exports.update = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    // console.log(request.query);
     let movies = await Movie.find().populate('author', '-password').select('-slika');
     res.status(200).json({
       status: 'success',
@@ -161,5 +160,3 @@ exports.getByUser = async (req, res) => {
     res.status(404).json({ status: 'fail', message: err.message });
   }
 };
-
-//implenet query search

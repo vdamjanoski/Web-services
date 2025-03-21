@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View by category</title>
+    <link rel="stylesheet" href="public.css">
+</head>
+<body>
+    <%- include(`partials/header`) %>
+    <div class="film-container">
+        <% if(movies.length === 0) { %>
+          <% } else { %> <% movies.forEach(movie => { %>
+          <div class="film">
+            <a href="/viewmovie/<%= movie._id %>" title="<%= movie.title %>">
+              <img src="/img/<%= movie.slika %>.jpg" alt="picture" />
+            </a>
+              <p class="film-title"> <%= movie.title %></p>
+          </div>
+          <% }); %><% } %>
+      </div>
+</body>
+</html>

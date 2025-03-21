@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
-//npm install validator - biblioteka za validacija na stringovi
 const validator = require('validator');
-//bcryptjs
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
@@ -25,6 +23,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Korisnikot mora da ima korisnicka lozinka'],
   },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 userSchema.pre('save', async function (next) {
