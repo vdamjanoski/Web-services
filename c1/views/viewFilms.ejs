@@ -11,6 +11,9 @@
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
   />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="public.css">
   </head>
   <script>
@@ -24,6 +27,8 @@
     };
   </script>
   <header>
+      <a href="/login" class="back-login"> < Back to login </a>
+      <h2 class="logo">CineFlow</h2>
     <form action="/viewmoviess" method="get" class="form-search">
       <input type="text" class="search-input" list="genres" placeholder="Search by category" name="genre" >
       <datalist id="genres">
@@ -33,8 +38,10 @@
                 <option value="Science Fiction">Science Fiction</option>
                 <option value="Fantasy">Fantasy</option>
       </datalist>
-      <!-- <button type="submit">Search</button> -->
     </form>
+    <!-- <form action="/signout" method="get">
+      <button type="submit">Sign out</button>
+    </form> -->
   </header>
   <body>
 
@@ -52,6 +59,8 @@
         </div>
         <% }); %><% } %>
     </div>
+
+    
 
 
     <div class="addFilm">

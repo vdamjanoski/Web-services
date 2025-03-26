@@ -1,5 +1,8 @@
 const Movie = require(`../model/moviesModel`);
 const sendEmail = require("./emailHandler");
+const User = require(`../model/user/userSchema`);
+const crypto = require(`crypto`);
+const jwt = require('jsonwebtoken');
 
 const multer = require(`multer`);
 const uuid = require(`uuid`);
@@ -118,3 +121,95 @@ exports.getLoginForm = async (req, res) => {
     }
   }
 
+  exports.getForgotPassword = async (req, res) => {
+    try {
+        res.status(200).render(`forgotPassword`, {
+          title: `Forgot Password`
+        })
+    } catch (err) {
+        res.status(500).render(`error`, {
+          err: err.message
+        })
+    }
+  }
+
+  exports.postForgotPassword = async (req, res) => {
+    try {
+      const user = await User.findOne({email: req.body.email});
+      if (!user){
+        return res.status(400).send(`Token is invalid or expired`)
+      }
+
+      const resetToken = crypto.randomBytes(32).toString(`hex`);
+      user.passwordResetToken = crypto.createHash(`sha256`).update(resetToken).digest(`hex`);
+      user.passwordResetExpires = Date.now() + 30 * 60 * 60 * 1000;
+      user.save({validateBeforeSave: false});
+
+      const resetUrl = `${req.protocol}://${req.get(`host`)}/submitPassword/${resetToken}`;
+      await sendEmail({
+        email: user.email,
+        html: `<a href="${resetUrl}">Click here to reset your password!</a>`,
+        subject: `Your reset token is valid for 30 minutes`,
+      })
+      res.status(200).redirect(`login`);
+    } catch (err) {
+      res.status(500).render(`error`, {
+        err: err.message
+      })
+    }
+  }
+
+  exports.getResetPassword = async (req, res) => {
+    try {
+      res.status(200).render(`submitPassword`, {
+        title: `Reset Password`,
+        token: req.params.token
+      });
+    } catch(err) {
+      res.status(500).render(`error`, {
+      err: err.message
+    })
+  }
+}
+
+
+exports.postResetPassword = async (req, res) => {
+  try {
+    const hashedToken = crypto.createHash(`sha256`).update(req.params.token).digest(`hex`);
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: {$gt: Date.now() },
+    })
+
+    if(!user){
+      return res.status(400).render(`error`, {
+        title: `Error`,
+      })
+    }
+
+    user.password = req.body.password;
+    user.passwordResetExpires = undefined;
+    user.passwordResetToken = undefined;
+
+    const token = jwt.sign(
+      {id: user._id, name: user.name, role: user.role, email: user.email},
+      process.env.JWT_SECRET,
+      {expiresIn: process.env.JWT_EXPIRES }
+    );
+
+    res.cookie(`jwt`, token, {
+      expires: new Date(Date.now()+ process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 10000),
+      secure: false,
+      httpOnly: true,
+    })
+
+    res.redirect(`/viewmovies`);
+  } catch(err) {
+    res.status(500).render(`error`, {
+    err: err.message
+  })
+}
+}
+  
+
+  

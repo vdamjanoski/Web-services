@@ -19,6 +19,8 @@ db.connectToDataBase();
 
 app.post('/api/v1/signup', auth.signup);
 app.post('/api/v1/login', auth.login);
+// app.get(`/signout`, auth.signout);
+
 
 app.get('/movies', movies.getAll);
 
@@ -29,7 +31,6 @@ app.post(`/createmovie`, viewHandler.createMovie);
 app.get(`/viewmovies`, viewHandler.movieView);
 app.get(`/deletemovie/:id`, viewHandler.deleteMovie);
 app.patch('/movies/:id', viewHandler.uploadFilmPhotos, viewHandler.updateMovie);
-
 app.use(
   jwt
     .expressjwt({
@@ -50,13 +51,23 @@ app.use(
     })
 );
 
-app.get('/movies', movies.getAll);
-app.get('/movies/:id', movies.getOne);
-app.post('/movies', auth.protect, movies.create);
+app.get(`/forgotPassword/`, viewHandler.getForgotPassword);
+app.post(`/forgotPassword`, viewHandler.postForgotPassword);
+
+app.get(`/submitPassword/:token`,viewHandler. getResetPassword);
+app.post('/submitPassword/:token', viewHandler.postResetPassword);
+
+
+
+
+
+app.get('/movies',  movies.getAll);
+app.get('/movies/:id',  movies.getOne);
+app.post('/movies',  movies.create);
 app.patch('/movies/:id', movies.uploadFilmPhotos ,movies.update);
-app.delete('/movies/:id', movies.delete);
-app.post('/movieByMe', auth.protect, movies.createByUser);
-app.get('/movieByMe', auth.protect, movies.getByUser);
+app.delete('/movies/:id',  movies.delete);
+app.post('/movieByMe', movies.createByUser);
+app.get('/movieByMe',  movies.getByUser);
 
 app.get('/login', viewHandler.getLoginForm);
 app.get('/viewmovies', viewHandler.movieView);
@@ -64,6 +75,9 @@ app.post('/createmovie', viewHandler.createMovie);
 app.get('/deletemovie/:id', viewHandler.deleteMovie);
 app.get(`/viewmovie/:id`, viewHandler.viewMovieById);
 app.get(`/viewmoviess`, viewHandler.viewMovieByQuery);
+
+
+// 
 
 app.listen(process.env.PORT, (err) => {
   if (err) {

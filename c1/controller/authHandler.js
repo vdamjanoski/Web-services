@@ -2,6 +2,9 @@ const User = require('../model/user/userSchema');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { promisify } = require('util');
+const crypto = require('crypto');
+const sendEmail = require(`./emailHandler`);
+const { clear } = require('console');
 
 exports.signup = async (req, res) => {
   try {
@@ -10,6 +13,12 @@ exports.signup = async (req, res) => {
       email: req.body.email,
       password: req.body.password,
     });
+
+    await sendEmail({
+      email: newUser.email,
+      subject: `Register succesfully!`,
+      messages: `Thank you ${newUser.name} for your registration!`
+    })
 
     res.status(201).json({
       status: 'Success',
@@ -68,124 +77,55 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.forgotPassword = async (req, res) => {
-  try {
-    //! 1) go barame korisnikot
-    const user = await User.findOne({ email: req.body.email });
-
-    if (!user) {
-      return res.status(404).send('This user doesnt exist');
-    }
-
-    //! 2) Generirame resitiracki token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    user.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    user.passwordResetExpires = Date.now() + 30 * 60 * 1000;
-    //! 3) go azurirame korisnikot
-    await user.save({ validateBeforeSave: false });
-
-    //! 4) kreiranje na resetiracki Url
-    const resetUrl = `${req.protocol}://${req.get('host')}/resetPassword/${resetToken}`;
-
-    const message = `Ja zaboravivte lozinkata, ve molime iskoristete Patch request so vashata nova lozinka - ova e reset url ${resetUrl}`;
-
-    //! 5) Isprakjanje na mail so resetirackiot url
-    await sendEmail({
-      email: user.email,
-      subject: 'Vashiot resetiracki token (30 minuti validen)',
-      messages: message,
-    });
-
-    res.status(200).json({
-      status: 'success',
-      message: 'url token send to email',
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'fail',
-      err: err.message,
-    });
-  }
-};
-
-exports.resetPassword = async (req, res) => {
-  try {
-    // const token = req.params.token;
-    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
-
-    //! 1) Go barame korisnikot
-    const user = await User.findOne({
-      passwordResetToken: hashedToken,
-      passwordResetExpires: { $gt: Date.now() },
-    });
-
-    //! 2) proveruvame vo slucaj da ne go pronajde korisnikot
-    if (!user) {
-      return res.status(400).send('Token is invalid or expired');
-    }
-
-    user.password = req.body.password;
-    user.passwordResetExpires = undefined;
-    user.passwordResetToken = undefined;
-
-    await user.save();
-
-    //! 3) kreiranje na token
-    const token = jwt.sign(
-      { id: user._id, name: user.name, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: process.env.JWT_EXPIRES,
-      }
-    );
-
-    res.cookie('jwt', token, {
-      expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 10000),
-      secure: false,
-      httpOnly: true,
-    });
-
-    res.status(201).json({
-      status: 'success',
-      token,
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'fail',
-      err: err.message,
-    });
-  }
-};
-
 exports.protect = async (req, res, next) => {
   try {
     let token;
-
-    if (req.headers.authorization) {
-      token = req.headers.authorization.split(' ')[1];
+    
+    if(req.headers.authorization){
+      token = req.headers.authorization.split(``)[1];
     }
     if (req.cookies.jwt) {
       token = req.cookies.jwt;
     }
 
-    if (!token) {
-      return res.status(500).send('You are not logged in! please log in');
+    if (!token){
+      return res.status(500).send(`You are not logged in! Please log in first`);
     }
 
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const deconded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-    const userTrue = await User.findById(decoded.id);
-    if (!userTrue) {
-      return res.status(401).send('User doesnt longer exist!');
+    const userTrue = await User.findById(deconded.id);
+    if (!userTrue){
+      return res.status(401).send(`User exist!`);
     }
 
     req.auth = userTrue;
 
     next();
+    
   } catch (err) {
     res.status(500).json({
-      status: 'fail',
-      err: err.message,
-    });
+      status: `fail`,
+      err: err.message
+    })
   }
-};
+}
+
+// exports.signout = async (req, res) => {
+//   try{
+//     res.clearCookie("jwt", { 
+//       httpOnly: true,
+//       secure: true
+//     });
+
+//     res.redirect(`/login`);
+//   }
+//   catch (err) {
+//     res.status(500).json({
+//       status: `fail`,
+//       err: err.message
+//     })
+// }
+// }
+
+

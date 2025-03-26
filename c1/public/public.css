@@ -6,7 +6,7 @@ body{
     padding-left: 15px;
     color: white;
     background: rgb(1,1,41);
-    background: linear-gradient(90deg, rgb(10, 10, 41) 0%, rgb(15, 15, 73) 50%, rgb(9, 9, 80) 100%);
+    background: linear-gradient(90deg, rgb(18, 18, 77) 0%, rgb(15, 15, 73) 50%, rgb(9, 9, 80) 100%);
 }
 .film-container{
     display: grid;
@@ -115,12 +115,33 @@ body{
  .form-search{
     display: flex;
     justify-content: center;
-    padding: 50px;
+    padding: 15px;
  }
+ header{
+    display: flex;
+    justify-content: space-between ;
+ }
+
+ .logo{
+    padding-top: 25px;
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    font-size: 45px;
+    color: rgb(90, 125, 158);
+    letter-spacing: 2px;
+ }
+
+ body > header > a{
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 15px;
+    color: white;
+ }
+
  .search-input{
-    font-size: 17px;
+    font-size: 15px;
     padding: 0 20px;
-    width: 600px;
+    width: 300px;
     height: 50px;
     border-radius: 30px;
     background-color: #2f2e55;
