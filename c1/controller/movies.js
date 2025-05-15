@@ -1,9 +1,7 @@
 const Movie = require('../model/moviesModel');
-// npm install uuid npm install multer
 const multer = require(`multer`);
 const uuid = require(`uuid`);
 
-// multerStorage - definirame na koja lokacija i kakvo ime bi imale slikite
 
 const imageId = uuid.v4();
 console.log(imageId);
@@ -13,7 +11,6 @@ const multerStorage = multer.diskStorage({
     callback(null, "public/img");
   },
   filename: (req, file, callback) => {
-    // -movie-uuid-timeStamp.jpg - vakov format
     const ext = file.mimetype.split(`/`)[1];
     callback(null, `movie-${imageId}-${Date.now()}.${ext}`);
   },
